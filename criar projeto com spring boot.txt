@@ -35,6 +35,78 @@ Criar o atributo ID como UUID, colocar anotação id e a estratégia de implemen
 private UUID id;
 
 Adicionar os outros atributos da tabela relacional.
+Criar construtor que recebe o Dto
 
 Obs. se a propriedade spring.jpa.hibernate.ddl-auto estiver como "update", o banco de dados será criado
+
+4 - Criar interface repository:
+Extender a classe JpaRepository com a classe modelo que pretende usar e o tipo do id usado nela:
+Indicar que é um @Repository
+
+public interface ProductRepository extends JpaRepository<ProductModel, UUID>{
+
+5 - Criar Classe Controller:
+Indicar que é um controller com @RestController.
+declarar o repositório com injeção de dependência: 
+@RestController
+public class ProductController {
+
+	@Autowired
+	ProductRepository productRepository;
+
+
+6 - Criar record Dto baseado no Model (com exceção do id, já que ele será autoincrementado)
+Adicionar anotações @NotBlank e @NotNull aos atributos
+
+7 - Criar as requisições HTTP:
+
+Get All:
+retornar um ResponseEntity com status OK e com uma lista do model no corpo/body
+
+@GetMapping
+	public ResponseEntity<List<ProductModel>> exibirTudo() {
+		
+		return ResponseEntity.status(HttpStatus.OK).body(productRepository.findAll());
+	}
+
+GetById:
+
+
+
+@GetMapping("/{id}")
+	public ResponseEntity<Object> exibirId(@PathVariable(value="id") UUID id){
+		Optional<ProductModel> productO = productRepository.findById(id); (Estudar Linha)
+		
+		return ResponseEntity.status(HttpStatus.OK).body(productO);
+		
+	}
+
+
+Post:
+Passar o dto nos argumentos 
+Usar o @RequestBody que é usado para enviar dados do cliente para o servidor em solicitações HTTP
+Usar a anotação @Valid para que o preenchimento dos atributos como NotBlank entre em vigor:
+ public void cadastrar(@RequestBody @Valid ProductDto productDto) 
+instanciar o model com o Dto.
+Usar o metodo save do repository instanciado:
+ProductModel a = new ProductModel(productDto);
+		productRepository.save(a);
+
+
+
+
+Update/Put:
+
+Delete:
+@DeleteMapping("/{id}")
+	public ResponseEntity<Object> delete(@PathVariable(value="id") UUID id){
+		Optional<ProductModel> productO = productRepository.findById(id);
+		
+		productRepository.delete(productO.get());
+		
+		return ResponseEntity.status(HttpStatus.OK).body(productO);
+		
+	}
+
+8 - Configurar api para o frontend:
 

@@ -1,0 +1,40 @@
+1 - Spring initialzr: (Inicializa o programa com dependências e tomcat)
+-Maven
+-Java 17
+-Adicionar dependencias:
+*Spring web
+*Lombok
+
+
+2 - Conectar o spring ao banco de dados:
+no arquivo application.properties colocar os dados:
+
+Para banco Mysql:
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost/nomeDoDatabase
+spring.datasource.username=root
+spring.datasource.password=root
+
+para banco PostegreSQL:
+spring.datasource.url=jdbc:postgresql://localhost:5432/northwind 
+spring.datasource.username=postgres
+spring.datasource.password=root
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+
+
+3 - Criar a classe do modelo relacional para gerar a tabela no banco de dados:
+Criar classe model no package .model.
+Indicar que será uma entidade (@Entity)
+Indicar o nome da tabela ( @Table(name = "TB_PRODUCTS") )
+Implementar a interface Serializable ( implements Serializable )
+e criar o long com serial ( private static final long serialVersionUID = 1L;)
+Criar o atributo ID como UUID, colocar anotação id e a estratégia de implementação:
+@Id
+@GeneratedValue(strategy=GenerationType.AUTO)
+private UUID id;
+
+Adicionar os outros atributos da tabela relacional.
+
+Obs. se a propriedade spring.jpa.hibernate.ddl-auto estiver como "update", o banco de dados será criado
+
